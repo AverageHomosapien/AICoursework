@@ -32,10 +32,18 @@ namespace AI_Application
         private void ReadButton_Click(object sender, RoutedEventArgs e)
         {
             var filePath = @"TestingFiles\";
+            var fileName = @"input.cav";
 
+            // Checking to use the standard pathname.
             if (FilePathBox.Text != "")
             {
+                filePath = FilePathBox.Text;
+            }
 
+            // Checking to use the standard filename.
+            if (FileNameBox.Text != "")
+            {
+                fileName = FileNameBox.Text;
             }
         }
     }
