@@ -10,27 +10,66 @@ namespace BusinessLayer
 {
     public class Read
     {
+        // Reads in text
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);
 
+            // Converts text into readable format
+            string readableText = ConvertText(input);
+        }
 
-            int caveNum = Int32.Parse(input[0].ToString());
+        private int CaveNum { get; set; }
+        private int[,] CaveCoords { get; set; }
 
-            input = input.Replace(",", "");
-            input = input.Remove(0,1);
+        private string ConvertText(string input)
+        {
+            // Getting cave number from beginning of string
+            string caveStr;
 
-            string[] caveCoords = new string[caveNum];
-
-            for (int i = 0; i < (caveNum * 2); i++)
+            // Checking the number of caves
+            if (input[1] == ',')
             {
-                
+                caveStr = input[0].ToString();
+                CaveNum = Int32.Parse(caveStr);
+                // Removing cave number and comma
+                input = input.Remove(0, 2);
+            }
+            else
+            {
+                caveStr = input[0].ToString() + input[1].ToString();
+                CaveNum = Int32.Parse(caveStr);
+                // Removing cave number and comma
+                input = input.Remove(0, 3);
             }
 
-            MessageBox.Show("CaveNum = " + caveNum);
-            MessageBox.Show("Input is " + input);
+            // Creating cave coord array
+            CaveCoords = new Int32[2, CaveNum];
 
-            
+            // Loops through cave coordinates
+            for (int i = 0; i < CaveNum; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    if (input[1] == ',')
+                    {
+                        CaveCoords[j, i] = Int32.Parse(input[0].ToString());
+                        input = input.Remove(0, 2);
+                    }
+                    else
+                    {
+                        var tempStr = input[0].ToString() + input[1].ToString();
+                        CaveCoords[j, i] += Int32.Parse(tempStr);
+                        input = input.Remove(0, 3);
+                    }
+                }
+            }
+
+            // Replacing commas below the cave coordinates are checked and removed
+            input = input.Replace(",", "");
+            input = input.Remove(0, 1);
+
+            return input;
         }
     }
 }
