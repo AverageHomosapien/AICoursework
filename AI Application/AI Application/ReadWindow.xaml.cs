@@ -10,33 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace AI_Application
 {
-    
-
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ReadWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ReadWindow : Window
     {
-        public MainWindow()
+        public ReadWindow()
         {
             InitializeComponent();
-        }
-
-        
-
-        private void ReadButton_Click(object sender, RoutedEventArgs e)
-        {
-            var filePath = @"TestingFiles\";
-
-            if (FilePathBox.Text != "")
-            {
-
-            }
         }
     }
 }

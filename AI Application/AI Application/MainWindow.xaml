@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Button x:Name="ReadButton" Content="Analyse File" HorizontalAlignment="Left" VerticalAlignment="Top" Width="173" Margin="179,107,0,0" Height="39" Click="ReadButton_Click"/>
+        <TextBox HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="Enter filename of input file..." VerticalAlignment="Top" Width="173" Margin="179,167,0,0"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="The program will attempt to read in the subfolder TestingFiles. If you wish to change the subfolder the program is reading from then enter the absolute filepath in the input below." VerticalAlignment="Top" Margin="17,10,0,0" Height="47" Width="481"/>
+        <TextBox x:Name="FilePathBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="481" Margin="17,62,0,0"/>
+
     </Grid>
 </Window>
