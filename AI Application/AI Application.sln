@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI Application", "AI Application\AI Application.csproj", "{3E0CEC0C-9296-4DF4-9C7F-5EE568ABB99A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationLayer", "AI Application\PresentationLayer.csproj", "{3E0CEC0C-9296-4DF4-9C7F-5EE568ABB99A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{87714D12-54B8-495A-A6B4-83DBFCF7FD99}"
 EndProject
