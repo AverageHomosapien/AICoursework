@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BusinessLayer;
 
 namespace AI_Application
 {
@@ -27,12 +29,10 @@ namespace AI_Application
             InitializeComponent();
         }
 
-        
-
         private void ReadButton_Click(object sender, RoutedEventArgs e)
         {
-            var filePath = @"TestingFiles\";
-            var fileName = @"input.cav";
+            var filePath = @"C:\Users\hamca\Documents\GitHub\AICoursework\AI Application\TestingFiles\";
+            var fileName = @"input.cav.text";
 
             // Checking to use the standard pathname.
             if (FilePathBox.Text != "")
@@ -45,6 +45,27 @@ namespace AI_Application
             {
                 fileName = FileNameBox.Text;
             }
+
+            // Calling readfile with correct filepath
+            var fileLoc = filePath + fileName;
+            
+            try
+            {
+                // Checking to see file exists
+                if (!File.Exists(fileLoc))
+                {
+                    throw new Exception
+                        ("Please ensure that the file you are attempting to search exists.");
+                }
+
+                var readFile = new Read(fileLoc);
+            }
+            catch (Exception fileCheck)
+            {
+                MessageBox.Show(fileCheck.Message, "error");
+            }
+            
+
         }
     }
 }
