@@ -10,17 +10,19 @@ namespace BusinessLayer
 {
     public class Read
     {
+
+        private int CaveNum { get; set; }
+        private int[,] CaveCoords { get; set; }
+        private string ReadableText { get; set; }
+
         // Reads in text
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);
 
             // Converts text into readable format
-            string readableText = ConvertText(input);
+            ReadableText = ConvertText(input);
         }
-
-        private int CaveNum { get; set; }
-        private int[,] CaveCoords { get; set; }
 
         private string ConvertText(string input)
         {
