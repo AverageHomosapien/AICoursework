@@ -13,15 +13,21 @@ namespace BusinessLayer
 
         public int CaveNum { get; private set; }
         public int[,] CaveCoords { get; private set; }
-        public string ReadableText { get; private set; }
+        public string CaveConnections { get; private set; }
+        public int MaxXCoord { get; private set; }
+        public int MaxYCoord { get; private set; }
+
 
         // Reads in text
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);
 
+            MaxXCoord = 0;
+            MaxYCoord = 0;
+
             // Converts text into readable format
-            ReadableText = ConvertText(input);
+            CaveConnections = ConvertText(input);
         }
 
         private string ConvertText(string input)
@@ -56,12 +62,20 @@ namespace BusinessLayer
                     if (input[1] == ',')
                     {
                         CaveCoords[j, i] = Int32.Parse(input[0].ToString());
+                        if (CaveCoords[i, 0] > MaxXCoord)
+                        {
+                            MaxXCoord = CaveCoords[i, 0];
+                        }
                         input = input.Remove(0, 2);
                     }
                     else
                     {
                         var tempStr = input[0].ToString() + input[1].ToString();
                         CaveCoords[j, i] += Int32.Parse(tempStr);
+                        if (CaveCoords[0, j] > MaxYCoord)
+                        {
+                            MaxXCoord = CaveCoords[0, j];
+                        }
                         input = input.Remove(0, 3);
                     }
                 }
@@ -70,6 +84,10 @@ namespace BusinessLayer
             // Replacing commas below the cave coordinates are checked and removed
             input = input.Replace(",", "");
             input = input.Remove(0, 1);
+
+            // Testing
+            MessageBox.Show("MaxYCoord = " + MaxYCoord);
+            MessageBox.Show("MaxXCoord = " + MaxXCoord);
 
             return input;
         }
