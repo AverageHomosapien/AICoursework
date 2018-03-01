@@ -11,9 +11,9 @@ namespace BusinessLayer
     public class Read
     {
 
-        private int CaveNum { get; set; }
-        private int[,] CaveCoords { get; set; }
-        private string ReadableText { get; set; }
+        public int CaveNum { get; private set; }
+        public int[,] CaveCoords { get; private set; }
+        public string ReadableText { get; private set; }
 
         // Reads in text
         public Read(string filepath)
