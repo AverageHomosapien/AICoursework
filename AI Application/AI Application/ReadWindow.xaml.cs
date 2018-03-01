@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BusinessLayer;
 
 namespace AI_Application
 {
@@ -19,9 +20,17 @@ namespace AI_Application
     /// </summary>
     public partial class ReadWindow : Window
     {
-        public ReadWindow()
+        public string FileLocation { get; private set; }
+
+        // Gets the highest set of cave coordinates and re-sizes the plotting on the canvas accordingly
+        private int XCoordModifier { get; set; }
+        private int YCoordModifier { get; set; }
+
+        public ReadWindow(string fileLocation)
         {
             InitializeComponent();
+            FileLocation = fileLocation;
+
             // Adding a line from (0,10) to (120,70)
             AddLine(0,10,120,70);
             // Adding a dot at (100,200)
@@ -30,7 +39,6 @@ namespace AI_Application
 
         private void MapCaves(int caveNum)
         {
-
 
             //CaveCanvas.Children.Add();
         }
@@ -46,12 +54,12 @@ namespace AI_Application
 
 
             // Coordinate for starting point of line
-            line.X1 = startXCoord;
-            line.Y1 = startYCoord;
+            line.X1 = startXCoord * XCoordModifier;
+            line.Y1 = startYCoord * XCoordModifier;
 
             // Coordinate for ending point of line
-            line.X2 = endXCoord;
-            line.Y2 = endYCoord;
+            line.X2 = endXCoord * YCoordModifier;
+            line.Y2 = endYCoord * YCoordModifier;
 
             // Adding the line to the canvas
             CaveCanvas.Children.Add(line);
@@ -64,8 +72,8 @@ namespace AI_Application
             elipse.Height = 12;
 
             elipse.Fill = Brushes.Black;
-            Canvas.SetLeft(elipse, xCoord);
-            Canvas.SetTop(elipse, yCoord);
+            Canvas.SetLeft(elipse, xCoord * XCoordModifier);
+            Canvas.SetTop(elipse, yCoord * YCoordModifier);
 
             CaveCanvas.Children.Add(elipse);
         }
@@ -81,13 +89,14 @@ namespace AI_Application
         // Automatic step through of the cave
         private void AutomateButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Read readFile = new Read(FileLocation);
+            
         }
 
         // Manual step through of the cave
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Read readFile = new Read(FileLocation);
         }
     }
 }

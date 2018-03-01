@@ -50,8 +50,6 @@ namespace AI_Application
                     throw new Exception
                         ("Please ensure that the file you are attempting to search exists.");
                 }
-
-                var readFile = new Read(fileLoc);
             }
             catch (Exception fileCheck)
             {
@@ -59,7 +57,7 @@ namespace AI_Application
             }
             
             // Open new window
-            ReadWindow window = new ReadWindow();
+            ReadWindow window = new ReadWindow(fileLoc);
             Close();
             window.Show();
 
