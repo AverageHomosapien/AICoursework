@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AI_Application"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Button x:Name="ReadButton" Content="Analyse File" HorizontalAlignment="Left" VerticalAlignment="Top" Width="173" Margin="179,107,0,0" Height="39" Click="ReadButton_Click"/>
         <TextBox x:Name="FileNameBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" Margin="179,235,0,0"/>
