@@ -23,24 +23,32 @@ namespace AI_Application
         public string FileLocation { get; private set; }
 
         // Gets the highest set of cave coordinates and re-sizes the plotting on the canvas accordingly
-        private int XCoordModifier { get; set; }
-        private int YCoordModifier { get; set; }
+        private double XCoordModifier { get;  set; }
+        private double YCoordModifier { get; set; }
 
         public ReadWindow(string fileLocation)
         {
             InitializeComponent();
             FileLocation = fileLocation;
 
+            Read readFile = new Read(FileLocation);
+
+            XCoordModifier = readFile.MaxXCoord;
+            YCoordModifier = readFile.MaxYCoord;
+
+            MessageBox.Show("XCoordModifier is " + XCoordModifier);
+            MessageBox.Show("YCoordModifier is " + YCoordModifier);
+
             // Adding a line from (0,10) to (120,70)
-            AddLine(0,10,120,70);
+            AddLine(0,5,40,30);
             // Adding a dot at (100,200)
-            AddCavern(100,200);
+            AddCavern(30,50);
         }
 
         private void MapCaves(int caveNum)
         {
 
-            //CaveCanvas.Children.Add();
+            
         }
 
         private void AddLine(int startXCoord, int startYCoord, int endXCoord, int endYCoord)
@@ -51,20 +59,19 @@ namespace AI_Application
             line.StrokeThickness = 2;
             line.Stroke = Brushes.Black;
 
-
-
             // Coordinate for starting point of line
-            line.X1 = startXCoord * XCoordModifier;
-            line.Y1 = startYCoord * XCoordModifier;
+            line.X1 = startXCoord * (XCoordModifier + 10);
+            line.Y1 = startYCoord * (XCoordModifier + 10);
 
             // Coordinate for ending point of line
-            line.X2 = endXCoord * YCoordModifier;
-            line.Y2 = endYCoord * YCoordModifier;
+            line.X2 = endXCoord * (YCoordModifier + 10);
+            line.Y2 = endYCoord * (YCoordModifier + 10);
 
             // Adding the line to the canvas
             CaveCanvas.Children.Add(line);
         }
 
+        // Adds caverns on the page
         private void AddCavern(int xCoord, int yCoord)
         {
             Ellipse elipse = new Ellipse();
@@ -72,8 +79,8 @@ namespace AI_Application
             elipse.Height = 12;
 
             elipse.Fill = Brushes.Black;
-            Canvas.SetLeft(elipse, xCoord * XCoordModifier);
-            Canvas.SetTop(elipse, yCoord * YCoordModifier);
+            Canvas.SetLeft(elipse, xCoord * (XCoordModifier + 10));
+            Canvas.SetTop(elipse, yCoord * (YCoordModifier + 10));
 
             CaveCanvas.Children.Add(elipse);
         }
@@ -90,13 +97,18 @@ namespace AI_Application
         private void AutomateButton_Click(object sender, RoutedEventArgs e)
         {
             Read readFile = new Read(FileLocation);
-            
+
+            XCoordModifier = readFile.MaxXCoord;
+            YCoordModifier = readFile.MaxYCoord;
         }
 
         // Manual step through of the cave
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
             Read readFile = new Read(FileLocation);
+
+            XCoordModifier = readFile.MaxXCoord;
+            YCoordModifier = readFile.MaxYCoord;
         }
     }
 }
