@@ -93,8 +93,7 @@ namespace BusinessLayer
                     _maxXCoord = CaveCoords[i, 0];
                 }
             }
-
-            MessageBox.Show("_maxXCoord is " + _maxXCoord);
+            
             return _maxXCoord;
         }
 
@@ -109,8 +108,7 @@ namespace BusinessLayer
                     _maxYCoord = CaveCoords[i, 1];
                 }
             }
-
-            MessageBox.Show("_maxYCoord is " + _maxYCoord);
+            
             return _maxYCoord;
         }
 

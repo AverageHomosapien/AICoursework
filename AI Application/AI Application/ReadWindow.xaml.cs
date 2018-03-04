@@ -36,9 +36,6 @@ namespace AI_Application
             XCoordModifier = readFile.MaxXCoord;
             YCoordModifier = readFile.MaxYCoord;
 
-            MessageBox.Show("XCoordModifier is " + XCoordModifier);
-            MessageBox.Show("YCoordModifier is " + YCoordModifier);
-
             // Adding a line from (0,10) to (120,70)
             AddLine(0,0,14,8);
             // Adding a dot at (100,200)
