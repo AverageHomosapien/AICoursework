@@ -5,11 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AI_Application"
         mc:Ignorable="d"
-        Title="ReadWindow" Height="590" Width="526">
+        Title="ReadWindow" Height="590" Width="750"
+        WindowStartupLocation="CenterScreen">
     <Grid>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="541" Stroke="Black" VerticalAlignment="Top" Width="500" Margin="10,10,0,0"/>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="41" Stroke="Black" VerticalAlignment="Top" Width="500" Margin="10,10,0,0"/>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="541" Stroke="Black" VerticalAlignment="Top" Width="219" Margin="515,10,0,0"/>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="41" Stroke="Black" VerticalAlignment="Top" Width="219" Margin="515,10,0,0"/>
         <Canvas x:Name="CaveCanvas" HorizontalAlignment="Left" Height="500" VerticalAlignment="Top" Width="500" Margin="10,51,0,0"/>
-        <Button x:Name="MenuButton" Content="Back to Menu" HorizontalAlignment="Left" VerticalAlignment="Top" Width="93" Margin="10,10,0,0" Height="36" Click="MenuButton_Click"/>
-        <Button x:Name="AutomateButton" Content="Automate Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="93" Margin="417,10,0,0" Height="36" Click="AutomateButton_Click"/>
-        <Button x:Name="ManualButton" Content="Step Through Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="119" Margin="289,10,0,0" Height="36" Click="ManualButton_Click"/>
+        <Button x:Name="MenuButton" Content="Back to Menu" HorizontalAlignment="Left" VerticalAlignment="Top" Width="93" Margin="13,12,0,0" Height="36" Click="MenuButton_Click"/>
+        <Button x:Name="AutomateButton" Content="Automate Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="93" Margin="413,12,0,0" Height="36" Click="AutomateButton_Click"/>
+        <Button x:Name="ManualButton" Content="Step Through Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="119" Margin="291,12,0,0" Height="36" Click="ManualButton_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="549,19,0,0" TextWrapping="Wrap" Text="Cave Information" VerticalAlignment="Top" Height="27" Width="157" FontSize="20"/>
     </Grid>
 </Window>
