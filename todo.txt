@@ -1,0 +1,4 @@
+TO DO:
+
+Make sure that program doesn't crash with a wrong file path or wrong filename
+Check for previous locations search has been to - stop the search from revisiting nodes

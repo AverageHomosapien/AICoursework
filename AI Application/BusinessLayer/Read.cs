@@ -76,7 +76,6 @@ namespace BusinessLayer
             
             // Replacing commas below the cave coordinates are checked and removed
             input = input.Replace(",", "");
-            input = input.Remove(0, 1);
 
             return input;
         }
