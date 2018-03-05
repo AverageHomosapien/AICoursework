@@ -17,5 +17,6 @@
         <Button x:Name="AutomateButton" Content="Automate Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="93" Margin="413,12,0,0" Height="36" Click="AutomateButton_Click"/>
         <Button x:Name="ManualButton" Content="Step Through Cave" HorizontalAlignment="Left" VerticalAlignment="Top" Width="119" Margin="291,12,0,0" Height="36" Click="ManualButton_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="549,19,0,0" TextWrapping="Wrap" Text="Cave Information" VerticalAlignment="Top" Height="27" Width="157" FontSize="20"/>
+        <Button x:Name="ClearCaveButton" Content="Clear Caves" HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="212,12,0,0" Height="36" Click="ClearCaveButton_OnClick"/>
     </Grid>
 </Window>
