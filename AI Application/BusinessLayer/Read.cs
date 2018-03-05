@@ -12,14 +12,13 @@ namespace BusinessLayer
     public class Read
     {
 
-        public int CaveNum { get; private set; }
-        public int[,] CaveCoords { get; private set; }
-        public string CaveConnections { get; private set; }
-        public double MaxXCoord { get; private set; }
-        public double MaxYCoord { get; private set; }
+        public static int CaveNum { get; private set; }
+        public static int[,] CaveCoords { get; private set; }
+        public static string CaveConnections { get; private set; }
+        public static double MaxXCoord { get; private set; }
+        public static double MaxYCoord { get; private set; }
 
-
-        // Reads in text
+        // Called in the readWindow initiation
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);

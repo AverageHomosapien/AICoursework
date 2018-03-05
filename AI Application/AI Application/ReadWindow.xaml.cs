@@ -22,24 +22,12 @@ namespace AI_Application
     {
         public string FileLocation { get; private set; }
 
-        // Plotting scale for the X and Y coordinates
-        private double XCoordModifier { get;  set; }
-        private double YCoordModifier { get; set; }
-
+        // Reads the file and gets ready for search
         public ReadWindow(string fileLocation)
         {
             InitializeComponent();
             FileLocation = fileLocation;
-
-            Read readFile = new Read(FileLocation);
-
-            XCoordModifier = readFile.MaxXCoord;
-            YCoordModifier = readFile.MaxYCoord;
-
-            // Adding a line from (0,10) to (120,70)
-            AddLine(0,0,14,8);
-            // Adding a dot at (100,200)
-            AddCavern(2,6);
+            Read newRead = new Read(fileLocation);
         }
 
         // Returns user to the main menu
@@ -60,12 +48,12 @@ namespace AI_Application
             line.Stroke = Brushes.Black;
 
             // Coordinate for starting point of line
-            line.X1 = startXCoord * XCoordModifier + 10;
-            line.Y1 = startYCoord * YCoordModifier + 10;
+            line.X1 = startXCoord * Read.MaxXCoord + 10;
+            line.Y1 = startYCoord * Read.MaxYCoord + 10;
 
             // Coordinate for ending point of line
-            line.X2 = endXCoord * XCoordModifier + 10;
-            line.Y2 = endYCoord * YCoordModifier + 10;
+            line.X2 = endXCoord * Read.MaxXCoord + 10;
+            line.Y2 = endYCoord * Read.MaxYCoord + 10;
 
             // Adding the line to the canvas
             CaveCanvas.Children.Add(line);
@@ -79,8 +67,8 @@ namespace AI_Application
             elipse.Height = 12;
 
             elipse.Fill = Brushes.Black;
-            Canvas.SetLeft(elipse, xCoord * XCoordModifier + 10);
-            Canvas.SetTop(elipse, yCoord * YCoordModifier + 10);
+            Canvas.SetLeft(elipse, xCoord * Read.MaxXCoord + 10);
+            Canvas.SetTop(elipse, yCoord * Read.MaxYCoord + 10);
 
             CaveCanvas.Children.Add(elipse);
         }
@@ -88,25 +76,72 @@ namespace AI_Application
         // Automatic step through of the cave
         private void AutomateButton_Click(object sender, RoutedEventArgs e)
         {
-            Read readFile = new Read(FileLocation);
+            ClearCanvas();
 
-            XCoordModifier = readFile.MaxXCoord;
-            YCoordModifier = readFile.MaxYCoord;
+            // Adding a line from (0,10) to (120,70)
+            AddLine(0, 0, 14, 8);
+            // Adding a dot at (100,200)
+            AddCavern(4, 6);
         }
 
         // Manual step through of the cave
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
-            Read readFile = new Read(FileLocation);
+            ClearCanvas();
 
-            XCoordModifier = readFile.MaxXCoord;
-            YCoordModifier = readFile.MaxYCoord;
+            int currentCave = 0;
+            bool cavesMapped = false;
+
+            // Repeats until current cave has been fully mapped
+            while (cavesMapped == false)
+            {
+
+                // Will return true when MapCaves reaches the end node
+                currentCave = MapCaves(currentCave);
+
+                // Checking for end of loop
+                if (currentCave == Read.CaveNum)
+                {
+                    cavesMapped = true;
+                }
+                
+                // Breaking infinite loop
+                cavesMapped = true;
+            }
+
+            // Adding a line from (0,10) to (120,70)
+            AddLine(0, 8, 14, 8);
+            // Adding a dot at (100,200)
+            AddCavern(2, 6);
+
+            
         }
 
-        private void MapCaves(int caveNum)
+        private int MapCaves(int caveNum)
+        {
+            // Search through caves connected to the cave number
+            for (int i = Read.CaveNum * caveNum; i < Read.CaveNum * caveNum + 7; i++)
+            {
+                
+            }
+
+            // Should return false - just to stop infinite loops
+            return caveNum;
+        }
+
+        private void UpdateUI()
         {
 
+        }
 
+        private void ClearCaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+        }
+
+        private void ClearCanvas()
+        {
+            CaveCanvas.Children.Clear();
         }
     }
 }
