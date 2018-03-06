@@ -2,3 +2,20 @@
 1001
 1000
 0010
+
+1,2
+1,1
+2,2
+2,1
+
+1-2-4-3
+
+0100
+1001
+1000
+0010
+
+1 - connected to 2
+2 - connected to 1 and 4
+4 - connected to 3
+3 - connected to 1
