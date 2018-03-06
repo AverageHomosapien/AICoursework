@@ -5,4 +5,13 @@ Check for previous locations search has been to - stop the search from revisitin
 
 DEAD END CODE ONLY GOES BACK UP ONE LEVEL - POSSIBILITY FOR INFINITE LOOP
 
-3 in infinite loop (because therre's no finish to node)
+pull out x and y coordinates from the final cave and find the distance with the euclidean distance
+
+Cave 3 ends at cave 2?
+	DOES IT NEED TO MAP THE FINAL CAVE?
+	NEEDS TO SET ACTIVE CAVE AS FINAL CAVE AND UPDATE UI ACCORDINGLY
+
+Add a completed variable - need to clear canvas (reset canvas) before you go again
+
+EXTRA:
+	turn active lines and active caves red
