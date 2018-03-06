@@ -20,5 +20,6 @@
         <Button x:Name="ClearCaveButton" Content="Clear Caves" HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="212,12,0,0" Height="36" Click="ClearCaveButton_OnClick"/>
         <TextBlock x:Name="CaveNumBlock"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="Cave Number: 0" Margin="531,91,0,427.8" FontSize="20"/>
         <TextBlock x:Name="CaveConnectedBlock"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="Caves Connected: 0" Margin="531,138,0,383.8" FontSize="20"/>
+        <TextBlock x:Name="CaveCoordinatesBlock"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="Cave Coordinates: " Margin="531,186,0,335.8" FontSize="20"/>
     </Grid>
 </Window>
