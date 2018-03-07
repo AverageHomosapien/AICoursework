@@ -17,6 +17,7 @@ namespace AI_Application
         // Visited the cave previously?
         public bool[] VisitedCoords { get; private set; }
         public bool[] DeadEndCaves { get; private set; }
+        public int[] EndNodeCoords { get; set; }
 
         // Reads the file and gets ready for search
         public ReadWindow(string fileLocation)

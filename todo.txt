@@ -15,3 +15,5 @@ Add a completed variable - need to clear canvas (reset canvas) before you go aga
 
 EXTRA:
 	turn active lines and active caves red
+
+ARE THE INSTRUCTIONS TO BE PUT IN A SEPERATE PDF, THE SAME PDF OR BOTH? CW SPEC IS VERY UNCLEAR
