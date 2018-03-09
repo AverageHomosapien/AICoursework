@@ -18,6 +18,7 @@ namespace AI_Application
         public bool[] VisitedCoords { get; private set; }
         public bool[] DeadEndCaves { get; private set; }
         public int[] EndNodeCoords { get; set; }
+        public int CavesVisited { get; private set; }
 
         // Reads the file and gets ready for search
         public ReadWindow(string fileLocation)
@@ -32,6 +33,7 @@ namespace AI_Application
             Read newRead = new Read(FileLocation);
             VisitedCoords = new Boolean[Read.CaveNum];
             DeadEndCaves = new bool[Read.CaveNum];
+            CavesVisited = 0;
 
             // Setting all values to false
             for (int i = 0; i < Read.CaveNum; i++)
@@ -196,14 +198,7 @@ namespace AI_Application
             }
 
             UpdateUI(currCaveNum + 1, caveConn, currentX, currentY);
-
-            // If it already at the end node, end program
-            // NOTE: READ.CaveNum holds the number of caves from 1, not 0
-            if (currCaveNum == Read.CaveNum - 1)
-            {
-                return currCaveNum;
-            }
-            // Adding to a list of visited coordinates
+            
             VisitedCoords[currCaveNum] = true;
 
             return CheckCaves(currCaveNum, caveConn, caveConnected);
@@ -237,6 +232,14 @@ namespace AI_Application
         /// <returns></returns>
         private int CheckCaves(int currCaveNum, int caveConn, bool[] caveConnected)
         {
+            // If it already at the end node, end program
+            // NOTE: READ.CaveNum holds the number of caves from 1, not 0
+            if (currCaveNum == Read.CaveNum - 1)
+            {
+                return currCaveNum;
+            }
+            // Adding to a list of visited coordinates
+
             // If a connected cave is the final cave of the search
             if (caveConnected[Read.CaveNum - 1])
             {
