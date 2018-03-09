@@ -22,7 +22,7 @@ namespace BusinessLayer
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);
-
+            
             // Converts text into readable format
             CaveConnections = ConvertText(input);
 
