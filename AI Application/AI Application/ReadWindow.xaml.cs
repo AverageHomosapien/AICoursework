@@ -147,7 +147,7 @@ namespace AI_Application
 
             MessageBox.Show("FINISHED MAPPING CAVES");
         }
-        
+
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -155,7 +155,7 @@ namespace AI_Application
 
         // Maps caves based on the cave number
         private int MapCaves(int caveToCheck)
-        { 
+        {
             // New list of connected cave numbers
             List<int> _levelOneCaves = new List<int>();
 
@@ -187,53 +187,44 @@ namespace AI_Application
                 // If there's a cave connection
                 if (Read.CaveConnections[i] == '1')
                 {
-
+                    // If the cave connection is the goal node
                     if (count == Read.CaveNum - 1)
                     {
                         FoundEndNode();
                     }
-                    _levelOneCaves.Add(count);
+
+                    // Repeating through each cave connection for caveNum
+                    for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
+                    {
+                        // If there's a cave connection
+                        if (Read.CaveConnections[i] == '1')
+                        {
+                            // If the cave connection is the goal node
+                            if (count == Read.CaveNum - 1)
+                            {
+                                FoundEndNode();
+                            }
+
+                            // Repeating through each cave connection for caveNum
+                            for (int k = Read.CaveNum * caveToCheck; k < Read.CaveNum * caveToCheck + Read.CaveNum; k++)
+                            {
+                                // If there's a cave connection
+                                if (Read.CaveConnections[i] == '1')
+                                {
+                                    if (count == Read.CaveNum - 1)
+                                    {
+                                        FoundEndNode();
+                                    }
+                                    _levelThreeCaves.Add(count);
+                                    _frontlineNodes.Add(count);
+                                }
+                            }
+                            _levelTwoCaves.Add(count);
+                        }
+                    }
                     // ADD TO CAVE CONNECTIONS? _caveConnections.Add);
                 }
-
                 count++;
-            }
-
-            // For the number of nodes underneath the 
-            for (int i = 0; i < _levelOneCaves.Count; i++)
-            {
-                // Repeating through each cave connection for caveNum
-                for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
-                {
-                    // If there's a cave connection
-                    if (Read.CaveConnections[i] == '1')
-                    {
-                        if (count == Read.CaveNum - 1)
-                        {
-                            FoundEndNode();
-                        }
-                        _levelTwoCaves.Add(count);
-                    }
-                }
-            }
-
-            // For the number of nodes underneath the 
-            for (int i = 0; i < _levelTwoCaves.Count; i++)
-            {
-                // Repeating through each cave connection for caveNum
-                for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
-                {
-                    // If there's a cave connection
-                    if (Read.CaveConnections[i] == '1')
-                    {
-                        if (count == Read.CaveNum - 1)
-                        {
-                            FoundEndNode();
-                        }
-                        _levelThreeCaves.Add(count);
-                        _frontlineNodes.Add(count);
-                    }
-                }
             }
 
             // For the number of nodes in the _frontlinenodes
@@ -259,7 +250,7 @@ namespace AI_Application
             int yCoord = Read.CaveCoords[caveToCheck, 1];
             int outputNum;
 
-            
+
             //return Math.Sqrt();
             return -1;
         }
