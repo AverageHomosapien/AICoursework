@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using BusinessLayer;
@@ -12,35 +14,34 @@ namespace AI_Application
     /// </summary>
     public partial class ReadWindow : Window
     {
+        private int FinalXCoord { get; set; }
+        private int FinalYCoord { get; set; }
+
         // Entire file location string
         public string FileLocation { get; private set; }
-        // Visited the cave previously?
-        public bool[] VisitedCoords { get; private set; }
-        public bool[] DeadEndCaves { get; private set; }
-        public int[] EndNodeCoords { get; set; }
-        public int CavesVisited { get; private set; }
 
         // Reads the file and gets ready for search
         public ReadWindow(string fileLocation)
         {
             FileLocation = fileLocation;
             InitializeComponent();
+
+            // Sets up the canvas for a new cave
+            SetUpRead();
         }
 
+        /// <summary>
+        /// Sets up the canvas for a new read
+        /// </summary>
         private void SetUpRead()
         {
             // Calling the read constructor
             Read newRead = new Read(FileLocation);
-            VisitedCoords = new Boolean[Read.CaveNum];
-            DeadEndCaves = new bool[Read.CaveNum];
-            CavesVisited = 0;
+            CaveCanvas.Children.Clear();
 
-            // Setting all values to false
-            for (int i = 0; i < Read.CaveNum; i++)
-            {
-                VisitedCoords[i] = false;
-                DeadEndCaves[i] = false;
-            }
+            // Trying to get the coordinates from the cave coordinates
+            FinalXCoord = Read.CaveCoords[Read.CaveNum - 1, 0];
+            FinalYCoord = Read.CaveCoords[Read.CaveNum, 0];
         }
 
         // Returns user to the main menu
@@ -54,7 +55,7 @@ namespace AI_Application
         // Request to clear the caverns
         private void ClearCaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            ClearCanvas();
+            SetUpRead();
         }
 
         /// <summary>
@@ -64,13 +65,22 @@ namespace AI_Application
         /// <param name="startYCoord">Starting Y Coordinate</param>
         /// <param name="endXCoord">Ending X Coordinate</param>
         /// <param name="endYCoord">Ending Y Coordinate</param>
-        private void AddLine(int startXCoord, int startYCoord, int endXCoord, int endYCoord)
+        private void AddLine(int startXCoord, int startYCoord, int endXCoord, int endYCoord, bool activeLine)
         {
             Line line = new Line();
 
             line.Visibility = Visibility.Visible;
             line.StrokeThickness = 2;
-            line.Stroke = Brushes.Black;
+
+            // If line is in current use
+            if (activeLine)
+            {
+                line.Fill = Brushes.Red;
+            }
+            else
+            {
+                line.Fill = Brushes.Black;
+            }
 
             // Coordinate for starting point of line
             line.X1 = startXCoord * Read.MaxXCoord + 10;
@@ -89,13 +99,15 @@ namespace AI_Application
         /// </summary>
         /// <param name="xCoord">X Coordinate of the Cavern</param>
         /// <param name="yCoord">Y Coordinate of the Cavern</param>
-        private void AddCavern(int xCoord, int yCoord, bool startOrEnd)
+        /// <param name="startOrEnd">Start or ending coordinate</param>
+        private void AddCavern(int xCoord, int yCoord, bool activeNode)
         {
             Ellipse elipse = new Ellipse();
             elipse.Width = 12;
             elipse.Height = 12;
 
-            if (startOrEnd)
+            // If node is in current use
+            if (activeNode)
             {
                 elipse.Fill = Brushes.Red;
             }
@@ -103,6 +115,7 @@ namespace AI_Application
             {
                 elipse.Fill = Brushes.Black;
             }
+
             Canvas.SetLeft(elipse, xCoord * Read.MaxXCoord + 5);
             Canvas.SetTop(elipse, yCoord * Read.MaxYCoord + 5);
 
@@ -120,218 +133,140 @@ namespace AI_Application
 
             SetUpRead();
 
-            ClearCanvas();
-
             int currentCave = 0;
+
+            // Adds the starting node on the map
             AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], true);
 
             // Repeats until current cave has been fully mapped
             while (currentCave != (Read.CaveNum - 1))
             {
-                // Will return true when MapCaves reaches the end node
-                var newCave = MapCaves(currentCave);
-                currentCave = newCave;
+                // Return current cave
+                currentCave = MapCaves(currentCave);
             }
 
             MessageBox.Show("FINISHED MAPPING CAVES");
         }
-
-        /// <summary>
-        /// Manual process for going through each cavern with a click
-        /// </summary>
-        /// <param name="sender">Object that sent the request</param>
-        /// <param name="e">Dummy object</param>
+        
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
         // Maps caves based on the cave number
-        private int MapCaves(int currCaveNum)
-        {
-            int currentX = Read.CaveCoords[currCaveNum, 0];
-            int currentY = Read.CaveCoords[currCaveNum, 1];
+        private int MapCaves(int caveToCheck)
+        { 
+            // New list of connected cave numbers
+            List<int> _levelOneCaves = new List<int>();
 
-            // Search through caves connected to the cave number
+            // New list of connected cave numbers
+            List<int> _levelTwoCaves = new List<int>();
+
+            // List of bottom level caves
+            List<int> _levelThreeCaves = new List<int>();
+
+            // Connections for each level
+            List<int> _caveConnections = new List<int>();
+
+            // Contains a list of all of the frontline nodes to be evaluated
+            List<int> _frontlineNodes = new List<int>();
+
+            // List of all active nodes
+            List<int> _activeNodes = new List<int>();
+
+            // Lists the new node to check
+            int newNodeToCheck = 1000;
+            int tempNode = 1000;
+
+
+            #region LoopThroughLevels
             int count = 0;
-            int caveConn = 0;
-            // Visited node 1
-            VisitedCoords[0] = true;
-            bool[] caveConnected = new bool[Read.CaveNum];
-
-            for (int i = 0; i < Read.CaveNum; i++)
+            // Repeating through each cave connection for caveNum
+            for (int i = Read.CaveNum * caveToCheck; i < Read.CaveNum * caveToCheck + Read.CaveNum; i++)
             {
-                caveConnected[i] = false;
-            }
-
-            // Loops through the caves connected to currCaveNum
-            for (int i = Read.CaveNum * currCaveNum; i < Read.CaveNum * currCaveNum + Read.CaveNum; i++)
-            {
-                // If there is a cave connection
+                // If there's a cave connection
                 if (Read.CaveConnections[i] == '1')
                 {
-                    int linkedX = Read.CaveCoords[count, 0];
-                    int linkedY = Read.CaveCoords[count, 1];
 
-                    // Only draw a new cave and line if the node hasn't been visited
-                    if (!VisitedCoords[count])
+                    if (count == Read.CaveNum - 1)
                     {
-                        AddLine(currentX, currentY, linkedX, linkedY);
-                        
-                        // If cavern is the end cavern (start cavern already been drawn)
-                        if (count == Read.CaveNum - 1)
-                        {
-                            AddCavern(linkedX, linkedY, true);
-                        }
-                        else // If not the final cavern
-                        {
-                            AddCavern(linkedX, linkedY, false);
-                        }
+                        FoundEndNode();
                     }
-
-                    caveConn++;
-                    caveConnected[count] = true;
-                    // Switches active cave halfway through code
+                    _levelOneCaves.Add(count);
+                    // ADD TO CAVE CONNECTIONS? _caveConnections.Add);
                 }
 
                 count++;
             }
 
-            UpdateUI(currCaveNum + 1, caveConn, currentX, currentY);
+            // For the number of nodes underneath the 
+            for (int i = 0; i < _levelOneCaves.Count; i++)
+            {
+                // Repeating through each cave connection for caveNum
+                for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
+                {
+                    // If there's a cave connection
+                    if (Read.CaveConnections[i] == '1')
+                    {
+                        if (count == Read.CaveNum - 1)
+                        {
+                            FoundEndNode();
+                        }
+                        _levelTwoCaves.Add(count);
+                    }
+                }
+            }
+
+            // For the number of nodes underneath the 
+            for (int i = 0; i < _levelTwoCaves.Count; i++)
+            {
+                // Repeating through each cave connection for caveNum
+                for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
+                {
+                    // If there's a cave connection
+                    if (Read.CaveConnections[i] == '1')
+                    {
+                        if (count == Read.CaveNum - 1)
+                        {
+                            FoundEndNode();
+                        }
+                        _levelThreeCaves.Add(count);
+                        _frontlineNodes.Add(count);
+                    }
+                }
+            }
+
+            // For the number of nodes in the _frontlinenodes
+            for (int i = 0; i < _frontlineNodes.Count; i++)
+            {
+                // Getting an evaluation back to check the new frontline nodes
+                int tempNumber = DjikstrasEvaluation(_frontlineNodes[i]);
+                if (tempNumber < tempNode)
+                {
+                    newNodeToCheck = _frontlineNodes[i];
+                }
+            }
+
+            #endregion
+
+            return -1;
+        }
+
+        // Returns the djikstra's evaluation of a node
+        private int DjikstrasEvaluation(int caveToCheck)
+        {
+            int xCoord = Read.CaveCoords[caveToCheck, 0];
+            int yCoord = Read.CaveCoords[caveToCheck, 1];
+            int outputNum;
+
             
-            VisitedCoords[currCaveNum] = true;
-
-            return CheckCaves(currCaveNum, caveConn, caveConnected);
-            // IF THERE IS ONLY ONE NODE CONNECTED AND IT'S ALREADY BEEN VISITED
-
-            // Return the next cave to go to
+            //return Math.Sqrt();
+            return -1;
         }
 
-        /// <summary>
-        /// Process that updates the UI information on the RHS screen
-        /// </summary>
-        private void UpdateUI(int caveNum, int cavesConnected, int xCoord, int yCoord)
+        private void FoundEndNode()
         {
-            CaveConnectedBlock.Text = "Cave Number: " + caveNum;
-            CaveNumBlock.Text = "Caves Connected: " + cavesConnected;
-            CaveCoordinatesBlock.Text = "Cave Coordinates: "+xCoord+","+yCoord;
-        }
 
-        // Clears the canvas
-        private void ClearCanvas()
-        {
-            CaveCanvas.Children.Clear();
-        }
-
-        /// <summary>
-        /// Checks each of the caves connecting to the current cave and returns the next cave number
-        /// </summary>
-        /// <param name="currCaveNum">Current cave number active</param>
-        /// <param name="caveConn">Number of cave connections to active cave</param>
-        /// <param name="caveConnected">Boolean array of connected caves</param>
-        /// <returns></returns>
-        private int CheckCaves(int currCaveNum, int caveConn, bool[] caveConnected)
-        {
-            // If it already at the end node, end program
-            // NOTE: READ.CaveNum holds the number of caves from 1, not 0
-            if (currCaveNum == Read.CaveNum - 1)
-            {
-                return currCaveNum;
-            }
-            // Adding to a list of visited coordinates
-
-            // If a connected cave is the final cave of the search
-            if (caveConnected[Read.CaveNum - 1])
-            {
-                MessageBox.Show("FINAL CAVE CONNECTED");
-                return Read.CaveNum - 1;
-            }
-
-            // If there is only one connected cave
-            //  And not the first node
-            if (caveConn == 1 && currCaveNum != 0)
-            {
-                DeadEndCaves[currCaveNum] = true;
-
-                MessageBox.Show("DEAD END NODE");
-
-                // Loop back through all the caves
-                for (int i = 0; i < Read.CaveNum; i++)
-                {
-                    if (caveConnected[i])
-                    {
-                        MessageBox.Show("Leaving dead end node");
-                        return i;
-                    }
-                }
-            }
-
-            // If the start node has no nodes connected
-            if (currCaveNum == 0 && caveConn == 0)
-            {
-                MessageBox.Show("NO NODES CONNECTED");
-                throw new Exception("There are no caves connected to the first cave.");
-            }
-
-            // If there is only a single cave connection
-            //  To the first node
-            if (caveConn == 1 && currCaveNum == 0)
-            {
-                MessageBox.Show("ONLY ONE CAVE CONNECTION");
-                for (int i = 0; i < Read.CaveNum; i++)
-                {
-                    if (caveConnected[i])
-                    {
-                        currCaveNum = i;
-                        MessageBox.Show("Returning " + currCaveNum);
-                        return currCaveNum;
-                    }
-                }
-
-                // If only one new connected cave (Came from previous node)
-            }
-            else if (caveConn == 2 && currCaveNum != 0)
-            {
-                MessageBox.Show("2 NODES - CAME FROM ONE");
-                for (int i = 0; i < Read.CaveNum; i++)
-                {
-                    if (caveConnected[i])
-                    {
-                        // If it hasn't been visited and not a dead end
-                        if (!VisitedCoords[i] && !DeadEndCaves[i])
-                        {
-                            currCaveNum = i;
-                        }
-
-                        // If there is a dead cave connected
-                        // CAN ONLY BE A DEAD END IF IT'S BEEN VISITED
-                        if (DeadEndCaves[i])
-                        {
-                            DeadEndCaves[currCaveNum] = true;
-                        }
-
-                        // POSSIBLE FOR INFINITE LOOP IF VISITED AND NOT DEAD END? 3 WAY LOOP? 
-                        // if (VisitedCoords[i])
-                    }
-                }
-
-                MessageBox.Show("In 2 Cave Connections and Not 1");
-                return currCaveNum;
-                // If Cave Connected greater than one and it's either the first node
-                //  or another node with 3+ connections
-            }
-            else if (caveConn > 1)
-            {
-                MessageBox.Show("MULTIPLE CONNECTIONS - TO BE CODED");
-                // If there is more than one cave connection available 
-                //  (cave 1 has 2 connections or other caves have 3)
-            }
-            else
-            {
-                MessageBox.Show("ELSE");
-            }
-
-            return Read.CaveNum - 1;
         }
     }
 }
