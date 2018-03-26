@@ -9,16 +9,22 @@ using System.Windows.Forms;
 
 namespace BusinessLayer
 {
+    /// <summary>
+    /// Class that reads in the input string and converts it into a readable string
+    /// </summary>
     public class Read
     {
-
         public static int CaveNum { get; private set; }
         public static int[,] CaveCoords { get; private set; }
         public static string CaveConnections { get; private set; }
         public static double MaxXCoord { get; private set; }
         public static double MaxYCoord { get; private set; }
 
-        // Called in the readWindow initiation
+        /// <summary>
+        /// Called in the readWindow initiation
+        /// Sets up parameters and reads input
+        /// </summary>
+        /// <param name="filepath"></param>
         public Read(string filepath)
         {
             string input = File.ReadAllText(filepath);
@@ -31,6 +37,11 @@ namespace BusinessLayer
             MaxYCoord = YCanvasScale();
         }
 
+        /// <summary>
+        /// Converts the input into readable text
+        /// </summary>
+        /// <param name="input">Input string to convert</param>
+        /// <returns></returns>
         private string ConvertText(string input)
         {
             // Getting cave number from beginning of string
@@ -80,7 +91,10 @@ namespace BusinessLayer
             return input;
         }
 
-        // Getting the biggest X coordinate to scale the cavern display accordingly
+        /// <summary>
+        /// Finds the highest X coordinate of the current coordinate set
+        /// </summary>
+        /// <returns></returns>
         private int HighestXCoord()
         {
             int _maxXCoord = 0;
@@ -95,7 +109,10 @@ namespace BusinessLayer
             return _maxXCoord;
         }
 
-        // Getting the biggest Y coordinate to scale the cavern display accordingly
+        /// <summary>
+        /// Finds the highest Y coordinate of the current coordinate set
+        /// </summary>
+        /// <returns></returns>
         private int HighestYCoord()
         {
             int _maxYCoord = 0;
@@ -110,7 +127,10 @@ namespace BusinessLayer
             return _maxYCoord;
         }
 
-        // Returns the scale of the X canvas
+        /// <summary>
+        /// Scales the X coordinates of the canvas based on the highest X coordinate
+        /// </summary>
+        /// <returns></returns>
         private double XCanvasScale()
         {
             int _maxXCoord = HighestXCoord();
@@ -120,7 +140,10 @@ namespace BusinessLayer
             return _xScale;
         }
 
-        // Returns the scale of the Y canvas
+        /// <summary>
+        /// Scales the Y coordinates of the canvas based on the highest Y coordinate
+        /// </summary>
+        /// <returns></returns>
         private double YCanvasScale()
         {
             int _maxYCoord = HighestYCoord();

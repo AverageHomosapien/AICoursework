@@ -182,12 +182,6 @@ namespace AI_Application
                 // If there's a cave connection
                 if (Read.CaveConnections[i] == '1')
                 {
-                    // If the cave connection is the goal node
-                    if (count == Read.CaveNum - 1)
-                    {
-                        return Read.CaveNum - 1;
-                    }
-
                     // If node hasn't already been visited
                     if (VisitedNode[count] != true)
                     {
@@ -199,6 +193,12 @@ namespace AI_Application
                         AddCavern(Read.CaveCoords[count,0], Read.CaveCoords[count,1]);
                         AddLine(Read.CaveCoords[count,0], Read.CaveCoords[count,1], Read.CaveCoords[caveToCheck,0], Read.CaveCoords[caveToCheck,1]);
 
+                        // If the cave connection is the goal node
+                        if (count == Read.CaveNum - 1)
+                        {
+                            return Read.CaveNum - 1;
+                        }
+
                         int innerCount = 0;
 
                         // Repeating through each cave connection for caveNum
@@ -208,20 +208,21 @@ namespace AI_Application
                             // If there's a cave connection
                             if (Read.CaveConnections[j] == '1')
                             {
-                                // If the cave connection is the goal node
-                                if (innerCount == Read.CaveNum - 1)
-                                {
-                                    return Read.CaveNum - 1;
-                                }
-
                                 // If node hasn't been visited already
                                 if (VisitedNode[innerCount] != true)
                                 {
                                     VisitedNode[innerCount] = true;
 
-
                                     AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
                                     AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[count, 0], Read.CaveCoords[count, 1]);
+
+                                    // If the cave connection is the goal node
+                                    if (innerCount == Read.CaveNum - 1)
+                                    {
+                                        MessageBox.Show("Returning cave early");
+                                        return Read.CaveNum - 1;
+                                    }
+                                    // CAN'T FIND FINAL CAVE MULTIPLE TIMES BECAUSE IT WILL BE MARKED VISITED
 
                                     int finalCount = 0;
 
@@ -231,13 +232,13 @@ namespace AI_Application
                                         // If there's a cave connection
                                         if (Read.CaveConnections[k] == '1')
                                         {
+                                            MessageBox.Show("Drawing cavern");
                                             AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
-                                            MessageBox.Show("Inner count is " + innerCount);
-                                            MessageBox.Show("Final count is " + finalCount);
                                             AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
 
                                             if (finalCount == Read.CaveNum - 1)
                                             {
+                                                MessageBox.Show("Found the cavern");
                                                 return Read.CaveNum - 1;
                                             }
 
@@ -268,8 +269,11 @@ namespace AI_Application
             {
                 // Getting an evaluation back to check the new frontline nodes
                 var tempNumber = NodeScore(FrontierNodes[i]);
+                
+                // If the new node is closer
                 if (tempNumber < tempNode)
                 {
+                    tempNode = tempNumber;
                     newNodeToCheck = FrontierNodes[i];
                 }
             }
