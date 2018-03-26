@@ -5,8 +5,6 @@ using BusinessLayer;
 
 namespace AI_Application
 {
-    
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -24,7 +22,9 @@ namespace AI_Application
         /// <param name="e">Dummy object</param>
         private void ReadButton_Click(object sender, RoutedEventArgs e)
         {
+            // Fixed file path
             var filePath = @"C:\Users\hamca\Documents\GitHub\AICoursework\AI Application\TestingFiles\";
+            // Fixed file extension
             var fileName = @"input.cav.text";
 
             // Checking to use the standard pathname.
