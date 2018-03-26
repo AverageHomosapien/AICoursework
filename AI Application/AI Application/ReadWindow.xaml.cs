@@ -61,10 +61,6 @@ namespace AI_Application
 
             // Visited the start node
             VisitedNode[0] = true;
-
-            AddLine(1, 2, 3, 4);
-            AddLine(2, 3, 1, 4);
-            AddLine(1, 1, 3, 4);
         }
 
         // Returns user to the main menu
@@ -94,17 +90,11 @@ namespace AI_Application
             {
                 Visibility = Visibility.Visible,
                 StrokeThickness = 2,
-                Fill = Brushes.Black,
-                /*
+                Stroke = Brushes.Black,
                 X1 = startXCoord * Read.MaxXCoord + 10,
                 Y1 = startYCoord * Read.MaxYCoord + 10,
                 X2 = endXCoord * Read.MaxXCoord + 10,
                 Y2 = endYCoord * Read.MaxYCoord + 10
-                */
-                X1 = 100,
-                X2 = 400,
-                Y1 = 100,
-                Y2 = 400
             };
 
             // Adding the line to the canvas
@@ -128,8 +118,6 @@ namespace AI_Application
 
             Canvas.SetLeft(elipse, xCoord * Read.MaxXCoord + 5);
             Canvas.SetTop(elipse, yCoord * Read.MaxYCoord + 5);
-
-            //elipse.Name = caveNum.ToString();
 
             CaveCanvas.Children.Add(elipse);
         }
@@ -187,9 +175,6 @@ namespace AI_Application
                     {
                         VisitedNode[count] = true;
 
-                        MessageBox.Show("Inner count is " + count);
-                        MessageBox.Show("Final count is " + caveToCheck);
-
                         AddCavern(Read.CaveCoords[count,0], Read.CaveCoords[count,1]);
                         AddLine(Read.CaveCoords[count,0], Read.CaveCoords[count,1], Read.CaveCoords[caveToCheck,0], Read.CaveCoords[caveToCheck,1]);
 
@@ -219,33 +204,30 @@ namespace AI_Application
                                     // If the cave connection is the goal node
                                     if (innerCount == Read.CaveNum - 1)
                                     {
-                                        MessageBox.Show("Returning cave early");
                                         return Read.CaveNum - 1;
                                     }
-                                    // CAN'T FIND FINAL CAVE MULTIPLE TIMES BECAUSE IT WILL BE MARKED VISITED
 
                                     int finalCount = 0;
 
                                     // Repeating through each cave connection for caveNum
                                     for (int k = Read.CaveNum * innerCount; k < Read.CaveNum * innerCount + Read.CaveNum; k++)
                                     {
+
                                         // If there's a cave connection
                                         if (Read.CaveConnections[k] == '1')
                                         {
-                                            MessageBox.Show("Drawing cavern");
-                                            AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
-                                            AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
-
-                                            if (finalCount == Read.CaveNum - 1)
-                                            {
-                                                MessageBox.Show("Found the cavern");
-                                                return Read.CaveNum - 1;
-                                            }
-
                                             // If node hasn't been visited already
                                             if (VisitedNode[finalCount] != true)
                                             {
                                                 VisitedNode[finalCount] = true;
+
+                                                AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
+                                                AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
+
+                                                if (finalCount == Read.CaveNum - 1)
+                                                {
+                                                    return Read.CaveNum - 1;
+                                                }
 
                                                 FrontierNodes.Add(finalCount);
                                                 FronteirNodeScores.Add(NodeScore(finalCount));
@@ -290,8 +272,6 @@ namespace AI_Application
 
             double xCoord = Read.CaveCoords[caveToCheck, 0];
             double yCoord = Read.CaveCoords[caveToCheck, 1];
-
-            MessageBox.Show(Read.CaveNum + " is read.cavenumber");
 
             double goalXCoord = Read.CaveCoords[Read.CaveNum -1, 0];
             double goalYCood = Read.CaveCoords[Read.CaveNum -1, 1];
