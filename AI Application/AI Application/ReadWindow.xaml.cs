@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using BusinessLayer;
@@ -17,6 +16,12 @@ namespace AI_Application
         private int FinalXCoord { get; set; }
         private int FinalYCoord { get; set; }
 
+        // Fronteir nodes and all the weightings of the nodes
+        public List<int> FrontierNodes = new List<int>();
+        public List<double> FronteirNodeScores = new List<double>();
+
+        public static bool[] VisitedNode;
+
         // Entire file location string
         public string FileLocation { get; private set; }
 
@@ -26,7 +31,6 @@ namespace AI_Application
             FileLocation = fileLocation;
             InitializeComponent();
 
-            // Sets up the canvas for a new cave
             SetUpRead();
         }
 
@@ -41,7 +45,26 @@ namespace AI_Application
 
             // Trying to get the coordinates from the cave coordinates
             FinalXCoord = Read.CaveCoords[Read.CaveNum - 1, 0];
-            FinalYCoord = Read.CaveCoords[Read.CaveNum, 0];
+            FinalYCoord = Read.CaveCoords[Read.CaveNum -1, 0];
+
+            FrontierNodes.Clear();
+            FronteirNodeScores.Clear();
+
+            // Sets up the canvas for a new cave
+            VisitedNode = new bool[Read.CaveNum];
+
+            // Setting all values to false
+            for (int i = 1; i < VisitedNode.Length; i++)
+            {
+                VisitedNode[i] = false;
+            }
+
+            // Visited the start node
+            VisitedNode[0] = true;
+
+            AddLine(1, 2, 3, 4);
+            AddLine(2, 3, 1, 4);
+            AddLine(1, 1, 3, 4);
         }
 
         // Returns user to the main menu
@@ -65,30 +88,24 @@ namespace AI_Application
         /// <param name="startYCoord">Starting Y Coordinate</param>
         /// <param name="endXCoord">Ending X Coordinate</param>
         /// <param name="endYCoord">Ending Y Coordinate</param>
-        private void AddLine(int startXCoord, int startYCoord, int endXCoord, int endYCoord, bool activeLine)
+        private void AddLine(int startXCoord, int startYCoord, int endXCoord, int endYCoord)
         {
-            Line line = new Line();
-
-            line.Visibility = Visibility.Visible;
-            line.StrokeThickness = 2;
-
-            // If line is in current use
-            if (activeLine)
+            var line = new Line
             {
-                line.Fill = Brushes.Red;
-            }
-            else
-            {
-                line.Fill = Brushes.Black;
-            }
-
-            // Coordinate for starting point of line
-            line.X1 = startXCoord * Read.MaxXCoord + 10;
-            line.Y1 = startYCoord * Read.MaxYCoord + 10;
-
-            // Coordinate for ending point of line
-            line.X2 = endXCoord * Read.MaxXCoord + 10;
-            line.Y2 = endYCoord * Read.MaxYCoord + 10;
+                Visibility = Visibility.Visible,
+                StrokeThickness = 2,
+                Fill = Brushes.Black,
+                /*
+                X1 = startXCoord * Read.MaxXCoord + 10,
+                Y1 = startYCoord * Read.MaxYCoord + 10,
+                X2 = endXCoord * Read.MaxXCoord + 10,
+                Y2 = endYCoord * Read.MaxYCoord + 10
+                */
+                X1 = 100,
+                X2 = 400,
+                Y1 = 100,
+                Y2 = 400
+            };
 
             // Adding the line to the canvas
             CaveCanvas.Children.Add(line);
@@ -99,27 +116,21 @@ namespace AI_Application
         /// </summary>
         /// <param name="xCoord">X Coordinate of the Cavern</param>
         /// <param name="yCoord">Y Coordinate of the Cavern</param>
-        /// <param name="startOrEnd">Start or ending coordinate</param>
-        private void AddCavern(int xCoord, int yCoord, bool activeNode)
+        private void AddCavern(int xCoord, int yCoord)
         {
-            Ellipse elipse = new Ellipse();
-            elipse.Width = 12;
-            elipse.Height = 12;
-
-            // If node is in current use
-            if (activeNode)
+            var elipse = new Ellipse
             {
-                elipse.Fill = Brushes.Red;
-            }
-            else
-            {
-                elipse.Fill = Brushes.Black;
-            }
+                Visibility = Visibility.Visible,
+                Width = 12,
+                Height = 12,
+                Fill = Brushes.Red
+            };
 
             Canvas.SetLeft(elipse, xCoord * Read.MaxXCoord + 5);
             Canvas.SetTop(elipse, yCoord * Read.MaxYCoord + 5);
 
             //elipse.Name = caveNum.ToString();
+
             CaveCanvas.Children.Add(elipse);
         }
 
@@ -130,21 +141,22 @@ namespace AI_Application
         /// <param name="e">Dummy object</param>
         private void AutomateButton_Click(object sender, RoutedEventArgs e)
         {
-
             SetUpRead();
 
             int currentCave = 0;
 
             // Adds the starting node on the map
-            AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], true);
+            AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
 
             // Repeats until current cave has been fully mapped
             while (currentCave != (Read.CaveNum - 1))
             {
-                // Return current cave
+                // Return current cave (CURRENTLY RETURNING -1)
                 currentCave = MapCaves(currentCave);
             }
 
+            // Found final node - IS THERE ANYTHING EXTRA TO BE DONE?
+            FoundEndNode();
             MessageBox.Show("FINISHED MAPPING CAVES");
         }
 
@@ -156,31 +168,14 @@ namespace AI_Application
         // Maps caves based on the cave number
         private int MapCaves(int caveToCheck)
         {
-            // New list of connected cave numbers
-            List<int> _levelOneCaves = new List<int>();
-
-            // New list of connected cave numbers
-            List<int> _levelTwoCaves = new List<int>();
-
-            // List of bottom level caves
-            List<int> _levelThreeCaves = new List<int>();
-
-            // Connections for each level
-            List<int> _caveConnections = new List<int>();
-
-            // Contains a list of all of the frontline nodes to be evaluated
-            List<int> _frontlineNodes = new List<int>();
-
-            // List of all active nodes
-            List<int> _activeNodes = new List<int>();
-
             // Lists the new node to check
             int newNodeToCheck = 1000;
-            int tempNode = 1000;
+            double tempNode = 1000;
 
 
             #region LoopThroughLevels
-            int count = 0;
+            int count = 0; // Can be used for the UI to show the total number of loops through the program?
+            // Needs to be global in that case
             // Repeating through each cave connection for caveNum
             for (int i = Read.CaveNum * caveToCheck; i < Read.CaveNum * caveToCheck + Read.CaveNum; i++)
             {
@@ -190,69 +185,123 @@ namespace AI_Application
                     // If the cave connection is the goal node
                     if (count == Read.CaveNum - 1)
                     {
-                        FoundEndNode();
+                        return Read.CaveNum - 1;
                     }
 
-                    // Repeating through each cave connection for caveNum
-                    for (int j = Read.CaveNum * caveToCheck; j < Read.CaveNum * caveToCheck + Read.CaveNum; j++)
+                    // If node hasn't already been visited
+                    if (VisitedNode[count] != true)
                     {
-                        // If there's a cave connection
-                        if (Read.CaveConnections[i] == '1')
-                        {
-                            // If the cave connection is the goal node
-                            if (count == Read.CaveNum - 1)
-                            {
-                                FoundEndNode();
-                            }
+                        VisitedNode[count] = true;
 
-                            // Repeating through each cave connection for caveNum
-                            for (int k = Read.CaveNum * caveToCheck; k < Read.CaveNum * caveToCheck + Read.CaveNum; k++)
+                        MessageBox.Show("Inner count is " + count);
+                        MessageBox.Show("Final count is " + caveToCheck);
+
+                        AddCavern(Read.CaveCoords[count,0], Read.CaveCoords[count,1]);
+                        AddLine(Read.CaveCoords[count,0], Read.CaveCoords[count,1], Read.CaveCoords[caveToCheck,0], Read.CaveCoords[caveToCheck,1]);
+
+                        int innerCount = 0;
+
+                        // Repeating through each cave connection for caveNum
+                        // NOT COUNT?
+                        for (int j = Read.CaveNum * count; j < Read.CaveNum * count + Read.CaveNum; j++)
+                        {
+                            // If there's a cave connection
+                            if (Read.CaveConnections[j] == '1')
                             {
-                                // If there's a cave connection
-                                if (Read.CaveConnections[i] == '1')
+                                // If the cave connection is the goal node
+                                if (innerCount == Read.CaveNum - 1)
                                 {
-                                    if (count == Read.CaveNum - 1)
+                                    return Read.CaveNum - 1;
+                                }
+
+                                // If node hasn't been visited already
+                                if (VisitedNode[innerCount] != true)
+                                {
+                                    VisitedNode[innerCount] = true;
+
+
+                                    AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
+                                    AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[count, 0], Read.CaveCoords[count, 1]);
+
+                                    int finalCount = 0;
+
+                                    // Repeating through each cave connection for caveNum
+                                    for (int k = Read.CaveNum * innerCount; k < Read.CaveNum * innerCount + Read.CaveNum; k++)
                                     {
-                                        FoundEndNode();
+                                        // If there's a cave connection
+                                        if (Read.CaveConnections[k] == '1')
+                                        {
+                                            AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
+                                            MessageBox.Show("Inner count is " + innerCount);
+                                            MessageBox.Show("Final count is " + finalCount);
+                                            AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
+
+                                            if (finalCount == Read.CaveNum - 1)
+                                            {
+                                                return Read.CaveNum - 1;
+                                            }
+
+                                            // If node hasn't been visited already
+                                            if (VisitedNode[finalCount] != true)
+                                            {
+                                                VisitedNode[finalCount] = true;
+
+                                                FrontierNodes.Add(finalCount);
+                                                FronteirNodeScores.Add(NodeScore(finalCount));
+                                            }
+                                        }
+
+                                        finalCount++;
                                     }
-                                    _levelThreeCaves.Add(count);
-                                    _frontlineNodes.Add(count);
                                 }
                             }
-                            _levelTwoCaves.Add(count);
+
+                            innerCount++;
                         }
                     }
-                    // ADD TO CAVE CONNECTIONS? _caveConnections.Add);
                 }
-                count++;
+                 count++;
             }
 
             // For the number of nodes in the _frontlinenodes
-            for (int i = 0; i < _frontlineNodes.Count; i++)
+            for (int i = 0; i < FrontierNodes.Count; i++)
             {
                 // Getting an evaluation back to check the new frontline nodes
-                int tempNumber = DjikstrasEvaluation(_frontlineNodes[i]);
+                var tempNumber = NodeScore(FrontierNodes[i]);
                 if (tempNumber < tempNode)
                 {
-                    newNodeToCheck = _frontlineNodes[i];
+                    newNodeToCheck = FrontierNodes[i];
                 }
             }
 
             #endregion
-
-            return -1;
+            
+            return newNodeToCheck;
         }
 
-        // Returns the djikstra's evaluation of a node
-        private int DjikstrasEvaluation(int caveToCheck)
+        // Returns the score of nodes
+        private double NodeScore(int caveToCheck)
         {
-            int xCoord = Read.CaveCoords[caveToCheck, 0];
-            int yCoord = Read.CaveCoords[caveToCheck, 1];
-            int outputNum;
+            double _score;
 
+            double xCoord = Read.CaveCoords[caveToCheck, 0];
+            double yCoord = Read.CaveCoords[caveToCheck, 1];
 
-            //return Math.Sqrt();
-            return -1;
+            MessageBox.Show(Read.CaveNum + " is read.cavenumber");
+
+            double goalXCoord = Read.CaveCoords[Read.CaveNum -1, 0];
+            double goalYCood = Read.CaveCoords[Read.CaveNum -1, 1];
+
+            _score = (goalXCoord - xCoord) + (goalYCood - yCoord);
+            _score = Math.Sqrt(_score);
+
+            // Making square positive if it's negative
+            if (_score < 0)
+            {
+                _score = _score * -1;
+            }
+
+            return _score;
         }
 
         private void FoundEndNode()
