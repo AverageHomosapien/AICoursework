@@ -123,6 +123,25 @@ namespace AI_Application
         }
 
         /// <summary>
+        /// Adds the label to the cave
+        /// </summary>
+        /// <param name="x">Left position</param>
+        /// <param name="y">Top position</param>
+        /// <param name="text">Cave Number</param>
+        private void AddLabel(double x, double y, string text)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = text,
+                Foreground = new SolidColorBrush(Colors.Blue),
+                FontSize = 20
+            };
+            Canvas.SetLeft(textBlock, x * Read.MaxXCoord - 16);
+            Canvas.SetTop(textBlock, y * Read.MaxYCoord - 8);
+            CaveCanvas.Children.Add(textBlock);
+        }
+
+        /// <summary>
         /// Automates the process of going from the start cave to the end
         /// </summary>
         /// <param name="sender">Object that sent the request</param>
@@ -135,6 +154,7 @@ namespace AI_Application
 
             // Adds the starting node on the map
             AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
+            AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], currentCave.ToString());
 
             // Repeats until current cave has been fully mapped
             while (currentCave != (Read.CaveNum - 1))
@@ -176,6 +196,7 @@ namespace AI_Application
                         VisitedNode[count] = true;
 
                         AddCavern(Read.CaveCoords[count,0], Read.CaveCoords[count,1]);
+                        AddLabel(Read.CaveCoords[count, 0], Read.CaveCoords[count, 1], (count+1).ToString());
                         AddLine(Read.CaveCoords[count,0], Read.CaveCoords[count,1], Read.CaveCoords[caveToCheck,0], Read.CaveCoords[caveToCheck,1]);
 
                         // If the cave connection is the goal node
@@ -199,6 +220,7 @@ namespace AI_Application
                                     VisitedNode[innerCount] = true;
 
                                     AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
+                                    AddLabel(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], (innerCount+1).ToString());
                                     AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[count, 0], Read.CaveCoords[count, 1]);
 
                                     // If the cave connection is the goal node
@@ -223,6 +245,8 @@ namespace AI_Application
 
                                                 AddCavern(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1]);
                                                 AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
+                                                AddLabel(Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1], (finalCount+1).ToString());
+                                                AddCavern(Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
 
                                                 if (finalCount == Read.CaveNum - 1)
                                                 {
