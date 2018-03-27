@@ -2,15 +2,16 @@ Program can get stuck if only one node but checked over and over and still the c
 	Need another check or bool to stop a top level block
 	1 is stuck in infinite loop
 
-Line doesn't draw
-
 Click through individual steps
 
-Make sure reset works
-
 Make sure final cave is drawn
+	Some caves don't get drawn (level 3)
+
+Active program isn't working ---
 
 Get the UI displaying more elements
+
+program active added for both automatic and manual elements
 
 Extension:
 	Active line drawn
