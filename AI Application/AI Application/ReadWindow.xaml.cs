@@ -16,11 +16,15 @@ namespace AI_Application
         private int FinalXCoord { get; set; }
         private int FinalYCoord { get; set; }
 
+        private bool ProgramActive { get; set; }
+        private bool ClickThroughActive { get; set; }
+
         // Fronteir nodes and all the weightings of the nodes
         public List<int> FrontierNodes = new List<int>();
         public List<double> FronteirNodeScores = new List<double>();
 
-        public static bool[] VisitedNode;
+        public bool[] VisitedNode;
+        public bool[] CheckedNodeScore;
 
         // Entire file location string
         public string FileLocation { get; private set; }
@@ -52,15 +56,20 @@ namespace AI_Application
 
             // Sets up the canvas for a new cave
             VisitedNode = new bool[Read.CaveNum];
+            CheckedNodeScore = new bool[Read.CaveNum];
 
             // Setting all values to false
             for (int i = 1; i < VisitedNode.Length; i++)
             {
                 VisitedNode[i] = false;
+                CheckedNodeScore[i] = false;
             }
 
             // Visited the start node
             VisitedNode[0] = true;
+            CheckedNodeScore[0] = false;
+
+            ProgramActive = false;
         }
 
         // Returns user to the main menu
@@ -74,6 +83,7 @@ namespace AI_Application
         // Request to clear the caverns
         private void ClearCaveButton_OnClick(object sender, RoutedEventArgs e)
         {
+            ProgramActive = false;
             SetUpRead();
         }
 
@@ -148,29 +158,52 @@ namespace AI_Application
         /// <param name="e">Dummy object</param>
         private void AutomateButton_Click(object sender, RoutedEventArgs e)
         {
-            SetUpRead();
-
-            int currentCave = 0;
-
-            // Adds the starting node on the map
-            AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
-            AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], currentCave.ToString());
-
-            // Repeats until current cave has been fully mapped
-            while (currentCave != (Read.CaveNum - 1))
+            // If the manual button has already been pressed
+            if (ProgramActive == false)
             {
-                // Return current cave (CURRENTLY RETURNING -1)
-                currentCave = MapCaves(currentCave);
-            }
+                ProgramActive = true;
+                ClickThroughActive = false;
 
-            // Found final node - IS THERE ANYTHING EXTRA TO BE DONE?
-            FoundEndNode();
-            MessageBox.Show("FINISHED MAPPING CAVES");
+                int currentCave = 0;
+
+                // Adds the starting node on the map
+                AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
+                AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], currentCave.ToString());
+
+                // Repeats until current cave has been fully mapped
+                while (currentCave != (Read.CaveNum - 1))
+                {
+                    // Return current cave (CURRENTLY RETURNING -1)
+                    currentCave = MapCaves(currentCave);
+                }
+
+                // Found final node - IS THERE ANYTHING EXTRA TO BE DONE?
+                FoundEndNode();
+                MessageBox.Show("FINISHED MAPPING CAVES");
+            }
+            else
+            {
+                MessageBox.Show("Please ensure that you reset the program before attempt another automatic search.");
+            }
         }
 
+        /// <summary>
+        /// Manual option for the program
+        /// </summary>
+        /// <param name="sender">Object that sent the request</param>
+        /// <param name="e">Dummy object</param>
         private void ManualButton_Click(object sender, RoutedEventArgs e)
         {
-
+            // If the automatic button has already been pressed
+            if ((ProgramActive && ClickThroughActive) || (ProgramActive == false))
+            {
+                ProgramActive = true;
+                ClickThroughActive = true;
+            }
+            else
+            {
+                MessageBox.Show("Please ensure that you reset the program before attempting a different mode.");
+            }
         }
 
         // Maps caves based on the cave number
@@ -273,19 +306,24 @@ namespace AI_Application
             // For the number of nodes in the _frontlinenodes
             for (int i = 0; i < FrontierNodes.Count; i++)
             {
-                // Getting an evaluation back to check the new frontline nodes
-                var tempNumber = NodeScore(FrontierNodes[i]);
-                
-                // If the new node is closer
-                if (tempNumber < tempNode)
+                if (!CheckedNodeScore[FrontierNodes[i]])
                 {
-                    tempNode = tempNumber;
-                    newNodeToCheck = FrontierNodes[i];
+                    // Getting an evaluation back to check the new frontline nodes
+                    var tempNumber = NodeScore(FrontierNodes[i]);
+
+                    // If the new node is closer
+                    if (tempNumber < tempNode)
+                    {
+                        tempNode = tempNumber;
+                        newNodeToCheck = FrontierNodes[i];
+                    }
                 }
             }
 
-            #endregion
+            CheckedNodeScore[newNodeToCheck] = true;
             
+            #endregion
+
             return newNodeToCheck;
         }
 
@@ -301,7 +339,6 @@ namespace AI_Application
             double goalYCood = Read.CaveCoords[Read.CaveNum -1, 1];
 
             _score = (goalXCoord - xCoord) + (goalYCood - yCoord);
-            _score = Math.Sqrt(_score);
 
             // Making square positive if it's negative
             if (_score < 0)
@@ -309,6 +346,7 @@ namespace AI_Application
                 _score = _score * -1;
             }
 
+            _score = Math.Sqrt(_score);
             return _score;
         }
 
