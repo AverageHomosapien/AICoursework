@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -168,17 +169,16 @@ namespace AI_Application
 
                 // Adds the starting node on the map
                 AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
-                AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], currentCave.ToString());
+                AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], (currentCave + 1).ToString());
 
                 // Repeats until current cave has been fully mapped
                 while (currentCave != (Read.CaveNum - 1))
                 {
                     // Return current cave (CURRENTLY RETURNING -1)
-                    currentCave = MapCaves(currentCave);
+                    currentCave = MapCaves(currentCave, false);
                 }
 
                 // Found final node - IS THERE ANYTHING EXTRA TO BE DONE?
-                FoundEndNode();
                 MessageBox.Show("FINISHED MAPPING CAVES");
             }
             else
@@ -199,6 +199,22 @@ namespace AI_Application
             {
                 ProgramActive = true;
                 ClickThroughActive = true;
+
+                int currentCave = 0;
+
+                // Adds the starting node on the map
+                AddCavern(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1]);
+                AddLabel(Read.CaveCoords[currentCave, 0], Read.CaveCoords[currentCave, 1], (currentCave + 1).ToString());
+
+                // Repeats until current cave has been fully mapped
+                while (currentCave != (Read.CaveNum - 1))
+                {
+                    // Return current cave (CURRENTLY RETURNING -1)
+                    currentCave = MapCaves(currentCave, true);
+                }
+
+                // Found final node - IS THERE ANYTHING EXTRA TO BE DONE?
+                MessageBox.Show("FINISHED MAPPING CAVES");
             }
             else
             {
@@ -207,7 +223,7 @@ namespace AI_Application
         }
 
         // Maps caves based on the cave number
-        private int MapCaves(int caveToCheck)
+        private int MapCaves(int caveToCheck, bool manualButton)
         {
             // Lists the new node to check
             int newNodeToCheck = 1000;
@@ -231,6 +247,12 @@ namespace AI_Application
                         AddCavern(Read.CaveCoords[count,0], Read.CaveCoords[count,1]);
                         AddLabel(Read.CaveCoords[count, 0], Read.CaveCoords[count, 1], (count+1).ToString());
                         AddLine(Read.CaveCoords[count,0], Read.CaveCoords[count,1], Read.CaveCoords[caveToCheck,0], Read.CaveCoords[caveToCheck,1]);
+
+                        // Step through caves
+                        if (ClickThroughActive)
+                        {
+                            MessageBox.Show("Continue...");
+                        }
 
                         // If the cave connection is the goal node
                         if (count == Read.CaveNum - 1)
@@ -256,6 +278,12 @@ namespace AI_Application
                                     AddLabel(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], (innerCount+1).ToString());
                                     AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[count, 0], Read.CaveCoords[count, 1]);
 
+                                    // Step through caves
+                                    if (ClickThroughActive)
+                                    {
+                                        MessageBox.Show("Continue...");
+                                    }
+
                                     // If the cave connection is the goal node
                                     if (innerCount == Read.CaveNum - 1)
                                     {
@@ -280,6 +308,12 @@ namespace AI_Application
                                                 AddLine(Read.CaveCoords[innerCount, 0], Read.CaveCoords[innerCount, 1], Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
                                                 AddLabel(Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1], (finalCount+1).ToString());
                                                 AddCavern(Read.CaveCoords[finalCount, 0], Read.CaveCoords[finalCount, 1]);
+
+                                                // Step through caves
+                                                if (ClickThroughActive)
+                                                {
+                                                    MessageBox.Show("Continue...");
+                                                }
 
                                                 if (finalCount == Read.CaveNum - 1)
                                                 {
@@ -348,11 +382,6 @@ namespace AI_Application
 
             _score = Math.Sqrt(_score);
             return _score;
-        }
-
-        private void FoundEndNode()
-        {
-
         }
     }
 }
