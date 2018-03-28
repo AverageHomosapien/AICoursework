@@ -1,5 +1,3 @@
-Click through individual steps
-
 Active program isn't working ---
 
 Get the UI displaying more elements
