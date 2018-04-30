@@ -23,9 +23,9 @@ namespace AI_Application
         private void ReadButton_Click(object sender, RoutedEventArgs e)
         {
             // Fixed file path
-            var filePath = @"C:\Users\hamca\Documents\GitHub\AICoursework\AI Application\TestingFiles\";
+            var filePath = @".\";
             // Fixed file extension
-            var fileName = @"input.cav.text";
+            var fileName = @"input.cav.txt";
 
             // Checking to use the standard pathname.
             if (FilePathBox.Text != "")
@@ -41,7 +41,16 @@ namespace AI_Application
 
             // Calling readfile with correct filepath
             var fileLoc = filePath + fileName;
-            
+
+            //MessageBox.Show("The file location is " + fileLoc);
+
+            /*
+            foreach (var VARIABLE in Directory.GetFiles(filePath))
+            {
+                MessageBox.Show(VARIABLE);
+            }
+            */
+
             try
             {
                 // Checking to see file exists
