@@ -23,7 +23,7 @@ namespace AI_Application
         private void ReadButton_Click(object sender, RoutedEventArgs e)
         {
             // Fixed file path
-            var filePath = @".\TestingFiles\";
+            var filePath = @".\";
             // Fixed file extension
             var fileName = @"input.cav.txt";
 
@@ -42,12 +42,14 @@ namespace AI_Application
             // Calling readfile with correct filepath
             var fileLoc = filePath + fileName;
 
-            MessageBox.Show("The file location is " + fileLoc);
+            //MessageBox.Show("The file location is " + fileLoc);
 
-            foreach (var VARIABLE in Directory.GetDirectories(filePath))
+            /*
+            foreach (var VARIABLE in Directory.GetFiles(filePath))
             {
                 MessageBox.Show(VARIABLE);
             }
+            */
 
             try
             {
