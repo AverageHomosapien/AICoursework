@@ -1,7 +1,5 @@
-# AICoursework
+# AI Coursework
 
-## Description:
-2018 AI Coursework 1
+Year 2 Coursework.
 
-## Author:
-Calum Hamilton
+I created an algorithm using a mixture of Dijkstra's Algorithm and Iterative Deepening search to find the quickest route through a cave system.
