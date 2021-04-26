@@ -2,7 +2,7 @@
 
 Year 2 Coursework.
 
-I created an algorithm using a mixture of Dijkstra's Algorithm and Iterative Deepening search to find the quickest route through a cave system.
+I created an algorithm using a mixture of Dijkstra's Algorithm and Iterative Deepening search to find the quickest route through various unseen cave systems.
 
 Example Cave System:
 
